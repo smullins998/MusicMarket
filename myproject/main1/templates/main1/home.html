@@ -1,0 +1,42 @@
+{% load static %}
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BetStream</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'main1/css/home.css' %}">
+
+</head>
+<body>
+    <div class="topbar">
+    <nav class="navbar">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+
+    </nav>
+    <div class="search-container">
+        <form action="">
+            <input type="text" id="search-input" placeholder="Search Artists" autocomplete="off">
+            <button type="submit">Send</button>
+            <div id="search-results"></div>
+        </form>
+        </div>
+   
+    </div>
+
+
+    <script src="{% static 'main1/javascript/topartists.js' %}"></script>
+
+
+
+    {% block content %}
+
+    <p>This is the home page</p>
+    {% endblock %}
+</body>
+
+</html>
