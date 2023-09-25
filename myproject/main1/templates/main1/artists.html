@@ -1,0 +1,285 @@
+{% extends "main1/home.html" %} {% load static %} {% block content %}
+<div class="artist-container">
+  <div class="stock-container">
+    Stock
+    <!-- Content related to stock goes here -->
+  </div>
+  <div class="artist-metadata-container">
+    <div id="artist-image">
+      <img id="artist-image-scr" src="" alt="" />
+      <p id="artist-image-artistname"></p>
+    </div>
+
+    <div id="artist-metadata-imagenan">
+      <div id="artist-url">
+        <div class="SpotifyButton">
+          <svg
+            class="spotifyicon"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 496 512"
+          >
+            <path
+              d="M248 8C111.1 8 0 119.1 0 256s111.1 248 248 248 248-111.1 248-248S384.9 8 248 8zm100.7 364.9c-4.2 0-6.8-1.3-10.7-3.6-62.4-37.6-135-39.2-206.7-24.5-3.9 1-9 2.6-11.9 2.6-9.7 0-15.8-7.7-15.8-15.8 0-10.3 6.1-15.2 13.6-16.8 81.9-18.1 165.6-16.5 237 26.2 6.1 3.9 9.7 7.4 9.7 16.5s-7.1 15.4-15.2 15.4zm26.9-65.6c-5.2 0-8.7-2.3-12.3-4.2-62.5-37-155.7-51.9-238.6-29.4-4.8 1.3-7.4 2.6-11.9 2.6-10.7 0-19.4-8.7-19.4-19.4s5.2-17.8 15.5-20.7c27.8-7.8 56.2-13.6 97.8-13.6 64.9 0 127.6 16.1 177 45.5 8.1 4.8 11.3 11 11.3 19.7-.1 10.8-8.5 19.5-19.4 19.5zm31-76.2c-5.2 0-8.4-1.3-12.9-3.9-71.2-42.5-198.5-52.7-280.9-29.7-3.6 1-8.1 2.6-12.9 2.6-13.2 0-23.3-10.3-23.3-23.6 0-13.6 8.4-21.3 17.4-23.9 35.2-10.3 74.6-15.2 117.5-15.2 73 0 149.5 15.2 205.4 47.8 7.8 4.5 12.9 10.7 12.9 22.6 0 13.6-11 23.3-23.2 23.3z"
+            />
+          </svg>
+          <a id="appendurl-Spotify" href="#"></a>
+          <span>spotify</span>
+        </div>
+      </div>
+    </div>
+    <div id="tracks-bio-divider">
+      <div id="artist-bio"></div>
+      <div id="artist-popular-tracks">
+        <div id="popular-tracks-inner">
+          <div id="top-tracks" href="#"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .artist-container {
+    display: block;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Adjust this to your desired height */
+  }
+
+  .artist-container > div {
+    border: 1px solid black;
+    padding: 20px;
+    margin: 10px;
+    height: 400px;
+  }
+
+  .artist-metadata-container {
+    display: flex;
+  }
+
+  #artist-picture img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  img {
+    width: inherit;
+    height: 250px;
+    margin: 10px;
+    border-radius: 15px;
+    border: 2px solid black;
+    box-shadow: 0 8px 0px -2px rgb(0, 0, 0);
+  }
+
+  #artist-image {
+    display: block;
+    text-align: center;
+  }
+
+  #artist-image-artistname {
+    font-size: 25px;
+  }
+
+  #artist-metadata-imagenan {
+    width: 100%;
+    height: 40%;
+    display: flex;
+    justify-content: center; /* Horizontal centering */
+    align-items: center; /* Vertical centering */
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+  #artist-metadata-imagenan > div {
+    margin: 35px;
+  }
+
+  #artist-popular-tracks {
+    background-color: white;
+    border-radius: 25px;
+    padding: 10px;
+    width: 100%;
+    height: 80%;
+    text-align: center;
+    border: 2px solid black;
+    box-shadow: 0 8px 0px -2px rgb(0, 0, 0);
+  }
+
+  #top-tracks > div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1px;
+  }
+
+  #top-tracks {
+    padding: 5px;
+  }
+
+  #top-tracks > div > a {
+    text-decoration: none;
+    color: #000000;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  #top-tracks > div > a:hover {
+    color: #3d99ea;
+    transition-duration: 0.2s;
+  }
+
+  .SpotifyButton {
+    width: 90px;
+    height: 100px;
+    background-color: white;
+    border-radius: 15px;
+    position: relative;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid black;
+    box-shadow: 0 8px 0px -2px rgb(0, 0, 0);
+  }
+
+  .SpotifyButton:hover {
+    background-color: #3d99ea;
+    transition-duration: 0.2s;
+  }
+
+  .SpotifyButton > a {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-decoration: none;
+    z-index: 1;
+  }
+  .SpotifyButton > span {
+    color: #000000;
+    font-size: 12px;
+  }
+
+  .spotifyicon {
+    width: 25px;
+    height: 25px;
+    margin: 0 auto; /* Center horizontally */
+    padding-bottom: 10px;
+  }
+
+  #artist-bio {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    border-radius: 25px;
+    padding: 10px;
+    width: 100%;
+    height: 80%;
+    text-align: center;
+    border: 2px solid black;
+    box-shadow: 0 8px 0px -2px rgb(0, 0, 0);
+    font-size: 15px;
+    padding: 20px;
+    overflow-x: hidden; /* Hide any overflow */
+    text-overflow: ellipsis; /* Display ellipsis (...) when text overflows */
+  }
+  #artist-bio::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+  #tracks-bio-divider {
+    display: flex;
+  }
+</style>
+
+<script>
+  async function fetchDataAndDisplay() {
+    try {
+      const currentUrl = window.location.href;
+
+      // Getting the last part of the url and passing it in the query
+      const urlParts = currentUrl.split("/");
+      const lastPart = urlParts[urlParts.length - 2];
+
+      const response = await fetch(`/api/artist_metadata/?query=${lastPart}`);
+      const data = await response.json();
+
+      const bioresponse = await fetch(`/api/artist_bio/?query=${lastPart}`);
+      const biodata = await bioresponse.json();
+
+      // Metadata split out
+      const artistFollowers = data.artists_data.followers;
+      const artistPictures = data.artists_data.pictures;
+      const artistUrl = data.artists_data.url;
+      const artistGenres = data.artists_data.genres;
+      const top_tracks = data.artists_data.top_tracks;
+      const preview_url = data.artists_data.preview_url;
+      const track_popularity = data.artists_data.track_popularity;
+      const artistBio = biodata.bio;
+
+      // Let's make all of this dynamic content and append to innerhtml
+      const url = document.getElementById("appendurl-Spotify");
+      url.href = artistUrl;
+
+      const bioContainer = document.getElementById("artist-bio");
+      bioContainer.innerHTML += artistBio;
+
+      const images = document.getElementById("artist-image-scr");
+      images.src = artistPictures;
+
+      // Decode the url and display the name
+      const decodedPart = lastPart.replace(/%20/g, " ");
+      const image_artist_name = document.getElementById(
+        "artist-image-artistname"
+      );
+      image_artist_name.textContent = decodedPart;
+
+      // Display popularity metrics
+      const top_tracks_element = document.getElementById("top-tracks");
+      const audioPlayer = new Audio();
+      for (let i = 0; i < top_tracks.length; i++) {
+        const trackName = top_tracks[i];
+        const previewUrl = preview_url[i];
+        const popularity = track_popularity[i];
+
+        // Create a new div element for each track
+        const trackDiv = document.createElement("div");
+        trackDiv.textContent = String(i + 1) + ".";
+
+        // Create an anchor (hyperlink) element for the track with the preview URL
+        const trackLink = document.createElement("a");
+        trackLink.href = previewUrl;
+        trackLink.textContent = trackName;
+
+        // Create a paragraph element for displaying popularity
+        const popularityParagraph = document.createElement("p");
+        popularityParagraph.textContent = `rating: ${popularity}`;
+
+        // Append the anchor and popularity elements to the track div
+        trackDiv.appendChild(trackLink);
+        trackDiv.appendChild(popularityParagraph);
+
+        // Add event listeners for mouseenter and mouseleave events
+        trackDiv.addEventListener("mouseenter", () => {
+          audioPlayer.src = previewUrl;
+          audioPlayer.play();
+        });
+
+        trackDiv.addEventListener("mouseleave", () => {
+          audioPlayer.pause();
+          audioPlayer.currentTime = 0; // Reset playback position
+        });
+
+        // Append the track div to the container
+        top_tracks_element.appendChild(trackDiv);
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+    }
+  }
+
+  fetchDataAndDisplay();
+</script>
+
+{% endblock %}

@@ -67,6 +67,6 @@ searchResults.addEventListener('click', (event) => {
         const artistPageUrl = `/artist/${artistName}/`;
 
         // Navigate to the artist's page
-        window.location.href = artistPageUrl;
+        window.location.href = artistPageUrl;1
     }
 });

@@ -1,6 +1,5 @@
 {% load static %}
 
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'main1/css/home.css' %}">
 
 </head>
+
 <body>
     <div class="topbar">
     <nav class="navbar">
@@ -25,18 +25,20 @@
             <div id="search-results"></div>
         </form>
         </div>
-   
     </div>
-
-
-    <script src="{% static 'main1/javascript/topartists.js' %}"></script>
-
-
 
     {% block content %}
 
     <p>This is the home page</p>
+    
     {% endblock %}
+
+    <script src="{% static 'main1/javascript/topartists.js' %}"></script>
+    <style>
+        body {
+            background-color: aliceblue;
+        }
+    </style>
 </body>
 
 </html>

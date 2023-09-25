@@ -2,12 +2,13 @@
 body, h1, h2, p, ul, li {
     margin: 0;
     padding: 0;
+
 }
 
 /* Apply a modern font (you can choose your own) */
 body {
-    font-family: Inter, sans-serif;
-    background-color: #fcfcfc;
+    font-family: 'Spotify', sans-serif;
+
 }
 
 .navbar ul {
@@ -79,3 +80,4 @@ body {
 input {
     padding: 3px;
 }
+
