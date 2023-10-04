@@ -1,0 +1,36 @@
+{% extends "main1/home.html" %}
+
+{% block title %}Login{% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div id="login-div">
+    <form method="POST" class="form-group">
+	{% csrf_token %}
+	{{ form|crispy }}
+    <p><a href="/register">Don't have an account? Create one here</a></p>
+    <br>
+	<button type="submit" class="btn btn-success">Login</button>
+    </form>
+</div>
+
+
+<style>
+
+
+    #login-div {
+        display: flex;
+        justify-content: center; /* Horizontally center */
+        align-items: center;
+        text-align: center;  
+
+        border: 2px solid rgb(218, 218, 218);
+        border-radius: 15px;
+        padding: 35px;
+        background-color: aliceblue;
+}
+
+</style>
+
+
+{% endblock %}

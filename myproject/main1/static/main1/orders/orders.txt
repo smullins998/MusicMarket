@@ -1,0 +1,13 @@
+Order: ['Buy'], num_shares: 25, order_type: ['Limit']
+Order: ['Buy'], num_shares: 54, order_type: ['Market']
+Order: ['Buy'], num_shares: 25, order_type: ['Market']
+Order: ['Buy'], num_shares: 22, order_type: ['Market']
+254425num_shares: 35
+Num_shares: 25
+Num_shares: 35
+Num_shares: 35
+Num_shares: 25
+Num_shares: 55
+Order: buy, num_shares: 66
+Order: buy, num_shares: 55
+Order: buy, num_shares: 42

@@ -1,44 +1,104 @@
 {% load static %}
 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BetStream</title>
     <link rel="stylesheet" type="text/css" href="{% static 'main1/css/home.css' %}">
-
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
-
 <body>
-    <div class="topbar">
-    <nav class="navbar">
-        <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
-        </ul>
+  
+        <div class="topbar">
+            <nav class="navbar">
+            {% if user.is_authenticated %}
+                
+                    <ul>
+                        <li><a href="{% url 'profile' %}"> {{ user.username }}</a></li>
+                        <li><a href="{% url 'trade' %}">Trade</a></li>
+                        <li><a href="#">Artists</a></li>
+                        <li><a href="{% url 'logout' %}">Logout</a></li>
 
-    </nav>
-    <div class="search-container">
-        <form action="">
-            <input type="text" id="search-input" placeholder="Search Artists" autocomplete="off">
-            <button type="submit">Send</button>
-            <div id="search-results"></div>
-        </form>
+                    </ul>
+           
+            {% else %}
+              
+                    <ul>
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'login' %}">Login</a></li>
+                    </ul>
+            
+            {% endif %}
+
         </div>
-    </div>
 
-    {% block content %}
 
-    <p>This is the home page</p>
-    
-    {% endblock %}
 
-    <script src="{% static 'main1/javascript/topartists.js' %}"></script>
-    <style>
-        body {
-            background-color: aliceblue;
-        }
-    </style>
+        <div class="content">
+        {% block content %}
+            <p>This is the home page</p>
+        {% endblock %}
+
+        </div>
+
 </body>
 
+<style>
+    /* Reset some default styles */
+body, h1, h2, p, ul, li {
+    margin: 0;
+    padding: 0;
+
+}
+
+/* Apply a modern font (you can choose your own) */
+body {
+    font-family: 'Spotify', sans-serif;
+
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    justify-content: center; /* Center-align items horizontally */
+    padding: 10px 0;
+    padding-top: 15px;
+}
+
+.navbar li {
+    margin: 0 20px; /* Add spacing between menu items */
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #000000;
+    font-weight: bold;
+}
+
+.navbar a:hover {
+    color: rgb(116, 116, 116);
+    transition-duration: .2s;
+}
+
+
+.topbar {
+    width: 100%;
+    height: 5%;
+    display: flex;
+    margin: 10px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+
+}
+
+
+
+</style>
 </html>

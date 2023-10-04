@@ -1,17 +1,12 @@
 {% extends "main1/home.html" %} {% load static %} {% block content %}
 <div class="artist-container">
-  <div class="stock-container">
-    Stock
-    <!-- Content related to stock goes here -->
-  </div>
-  <div class="artist-metadata-container">
-    <div id="artist-image">
-      <img id="artist-image-scr" src="" alt="" />
-      <p id="artist-image-artistname"></p>
-    </div>
-
-    <div id="artist-metadata-imagenan">
-      <div id="artist-url">
+  <div id="stock-container">
+    <div id="main-left">
+      <div id="stock-name-container">
+        <div id="name-and-stock-price">
+          <span id="title-name"></span>
+          <span id="stock-price"></span>
+        </div>
         <div class="SpotifyButton">
           <svg
             class="spotifyicon"
@@ -23,10 +18,30 @@
             />
           </svg>
           <a id="appendurl-Spotify" href="#"></a>
-          <span>spotify</span>
         </div>
       </div>
+      <div id="buysell-container">
+        <form action="" method="POST" class="form-group">
+          <div class="shares-input">
+            {% csrf_token %}
+            <p>Shares: </p>
+            <div class="input-group">{{ form.num_shares }}</div>
+          </div>
+          <button type="submit" class="btn btn-success">Submit</button>
+        </form>
+      </div>
     </div>
+    <div id="main-right">
+      <img src="/static/main1/pictures/Chart-holder.png" alt="" />
+    </div>
+  </div>
+
+  <div class="artist-metadata-container">
+    <div id="artist-image">
+      <img id="artist-image-scr" src="" alt="" />
+    </div>
+
+    <div id="artist-metadata-imagenan"></div>
     <div id="tracks-bio-divider">
       <div id="artist-bio"></div>
       <div id="artist-popular-tracks">
@@ -39,15 +54,106 @@
 </div>
 
 <style>
+  @font-face {
+    font-family: "Spotify";
+    src: url("/static/main1/fonts/Spotify/CircularSpotifyText-Medium.otf")
+      format("opentype");
+  }
+  @font-face {
+    font-family: "Spotify-bold";
+    src: url("/static/main1/fonts/Spotify/CircularSpotifyText-Bold.otf")
+      format("opentype");
+  }
+
   .artist-container {
     display: block;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Adjust this to your desired height */
+    height: 120vh; /* Adjust this to your desired height */
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-top: 20px;
+  }
+
+  #stock-name-container {
+    font-family: "Spotify";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    margin: 5px;
+    min-width: 150px;
+    max-width: 500px;
+    border-bottom: 1px solid rgb(228, 228, 228);
+  }
+
+  #name-and-stock-price {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  #title-name {
+    font-size: 2.0vw;
+  }
+  #stock-price {
+    font-family: "Spotify-bold";
+    font-size: 25px;
+  }
+
+  #buysell-container {
+    height: 70%;
+    justify-content: center;
+    text-align: center;
+    margin: 10px;
+    display: flex;
+  }
+
+  #stock-container {
+    height: fit-content;
+    max-height: 100%;
+    display: flex;
+    padding: 25px;
+  }
+  #main-right {
+    width: 100%;
+    margin-left: 25px;
+    border-radius: 25px;
+    border: 2px solid #d2d2d2;
+    padding: 10px;
+  }
+
+  #main-left {
+    margin-left: 25px;
+    border-radius: 25px;
+    border: #d2d2d2 2px solid;
+    box-shadow: 2px 4px #d5d5d5;
+
+    padding: 10px;
+    min-width: 280px;
+  }
+
+  #main-right > img {
+    height: 80%;
+    width: 90%;
+  }
+
+  #artist-image {
+    max-width: 350px;
+    min-width: 300px;
+  }
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block; /* Remove any extra space below the image */
+    margin: auto; /* Center the image horizontally (optional) */
+    margin: 10px;
   }
 
   .artist-container > div {
-    border: 1px solid black;
     padding: 20px;
     margin: 10px;
     height: 400px;
@@ -55,6 +161,9 @@
 
   .artist-metadata-container {
     display: flex;
+    border-radius: 25px;
+    border: 2px solid #d2d2d2;
+    padding: 10px;
   }
 
   #artist-picture img {
@@ -62,22 +171,14 @@
     height: auto;
   }
 
-  img {
-    width: inherit;
-    height: 250px;
-    margin: 10px;
-    border-radius: 15px;
-    border: 2px solid black;
-    box-shadow: 0 8px 0px -2px rgb(0, 0, 0);
-  }
-
   #artist-image {
     display: block;
     text-align: center;
+    justify-content: center;
   }
 
   #artist-image-artistname {
-    font-size: 25px;
+    font-size: 12px;
   }
 
   #artist-metadata-imagenan {
@@ -93,14 +194,11 @@
   }
 
   #artist-popular-tracks {
-    background-color: white;
     border-radius: 25px;
     padding: 10px;
     width: 100%;
     height: 80%;
     text-align: center;
-    border: 2px solid black;
-    box-shadow: 0 8px 0px -2px rgb(0, 0, 0);
   }
 
   #top-tracks > div {
@@ -111,7 +209,8 @@
   }
 
   #top-tracks {
-    padding: 5px;
+    padding: 3px;
+    font-size: 12px;
   }
 
   #top-tracks > div > a {
@@ -128,23 +227,15 @@
   }
 
   .SpotifyButton {
-    width: 90px;
-    height: 100px;
-    background-color: white;
-    border-radius: 15px;
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
     position: relative;
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 2px solid black;
-    box-shadow: 0 8px 0px -2px rgb(0, 0, 0);
-  }
-
-  .SpotifyButton:hover {
-    background-color: #3d99ea;
-    transition-duration: 0.2s;
   }
 
   .SpotifyButton > a {
@@ -156,30 +247,23 @@
     text-decoration: none;
     z-index: 1;
   }
-  .SpotifyButton > span {
-    color: #000000;
-    font-size: 12px;
-  }
 
   .spotifyicon {
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
     margin: 0 auto; /* Center horizontally */
     padding-bottom: 10px;
   }
 
   #artist-bio {
     width: 100%;
-    height: 100%;
-    background-color: white;
+    height: 90%;
     border-radius: 25px;
     padding: 10px;
     width: 100%;
     height: 80%;
     text-align: center;
-    border: 2px solid black;
-    box-shadow: 0 8px 0px -2px rgb(0, 0, 0);
-    font-size: 15px;
+    font-size: 12px;
     padding: 20px;
     overflow-x: hidden; /* Hide any overflow */
     text-overflow: ellipsis; /* Display ellipsis (...) when text overflows */
@@ -191,6 +275,25 @@
   #tracks-bio-divider {
     display: flex;
   }
+  #tracks-bio-divider > div {
+    margin: 15px;
+  }
+
+  .shares-input {
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 60px;
+  }
+
+.shares-input > p {
+  padding: 10px;
+  font-size: 17px;
+  margin-right: 5px;
+}
+
 </style>
 
 <script>
@@ -230,10 +333,12 @@
 
       // Decode the url and display the name
       const decodedPart = lastPart.replace(/%20/g, " ");
-      const image_artist_name = document.getElementById(
-        "artist-image-artistname"
-      );
-      image_artist_name.textContent = decodedPart;
+      const nametitle = document.getElementById("title-name");
+      nametitle.innerHTML = decodedPart;
+
+      const stock_price = document.getElementById("stock-price");
+      const myint = 172.45;
+      stock_price.innerHTML = "$ " + myint;
 
       // Display popularity metrics
       const top_tracks_element = document.getElementById("top-tracks");
