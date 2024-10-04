@@ -3,8 +3,27 @@
 {% block title %}Logout{% endblock %}
 
 {% block content %}
-<div id="logout-div">
-    <p>{{ user.username }}
+
+<div class="portfolio-container">
+    <h1>My Stock Portfolio</h1>
+    <div class="stock">
+        <div class="stock-name">Apple Inc. (AAPL)</div>
+        <div class="stock-info">
+            <div class="stock-quantity">Shares: 100</div>
+            <div class="stock-value">Current Value: $12,500</div>
+            <div class="stock-status">Status: <span class="up">+10% (Up)</span></div>
+        </div>
+    </div>
+    <div class="stock">
+        <div class="stock-name">Microsoft Corporation (MSFT)</div>
+        <div class="stock-info">
+            <div class="stock-quantity">Shares: 50</div>
+            <div class="stock-value">Current Value: $7,500</div>
+            <div class="stock-status">Status: <span class="down">-5% (Down)</span></div>
+        </div>
+    </div>
+    <!-- Add more stocks as needed -->
 </div>
+
 
 {% endblock %}

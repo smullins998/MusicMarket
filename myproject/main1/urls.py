@@ -1,15 +1,11 @@
-from django.urls import path, include
-
+from django.urls import path
 from . import views
 
-urlpatterns =  [
-    path('', views.home, name='home'),
-    path('api/top_artists/', views.get_top_artists, name='get_top_artists'),
+urlpatterns = [
+    # ... existing urls ...
     path('artist/<str:artist_name>/', views.artist_detail, name='artist_detail'),
     path('api/artist_metadata/', views.get_artist_metadata, name='artist_metadata'),
     path('api/artist_bio/', views.get_artist_bio, name='artist_bio'),
     path('api/artist_stock/', views.get_artist_stock, name='artist_stock'),
-    path('trade/', views.trade, name='trade'),
-
-
+    # ... existing urls ...
 ]

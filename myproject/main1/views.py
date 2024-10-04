@@ -4,12 +4,22 @@ from django.http import JsonResponse
 from main1.static.main1.python.topartists import top_artists
 from main1.static.main1.python.artist_metadata import artist_metadata
 from main1.static.main1.python.lastfm_artistbio import lastfm_bio
+from main1.static.main1.python.artist_stock import artist_stock
 from .forms import OrderSubmit
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
+import uuid
+import mysql.connector
+import plotly.graph_objs as go
+from plotly.io import to_html
+from django.shortcuts import render
+from datetime import datetime
+import os
+from django.conf import settings
+from django.shortcuts import render, get_object_or_404
+from .models import Artist
+from django.http import JsonResponse
 
-# from .forms import Register
-
-# Create your views here. Here are where all of the pages are
 
 def home(response):
     return render(response, 'main1/home.html', {})
@@ -23,24 +33,20 @@ def get_top_artists(request):
     else:
         return JsonResponse([], safe=False)
  
-@login_required   
+ 
+ ##############
+ #BUYSELL FORM SUBMISSION 
+ ##############
+ 
+@login_required
 def artist_detail(request, artist_name):
-    if request.method == 'POST':
-        print("Received a POST request")
-        form = OrderSubmit(request.POST)
-        if form.is_valid():
-            print("Form is valid")      
-            print(form.cleaned_data)
-        else:
-            print('invalid form')
-            
-        return redirect(request.path)
-        
-    else:
-        print("Received a GET request")
-        form = OrderSubmit()
-    
-    return render(request, 'main1/artists.html', {'form': form})
+    # Pass only the artist name to the template
+    form = OrderSubmit()
+    context = {
+        'artist': artist_name,
+        'form': form,
+    }
+    return render(request, 'main1/artists.html', context)
 
 def get_artist_metadata(request):
     query = request.GET.get('query', '')
@@ -50,14 +56,21 @@ def get_artist_metadata(request):
     else:
         return JsonResponse({'artists_data': []})
     
+    
 def get_artist_bio(request):
     query = request.GET.get('query', '')
     if query:
         bio = lastfm_bio(query)
         return JsonResponse({'bio': bio})
     else:
-        return JsonResponse({'artists_data': []})
+        return JsonResponse({'bio': ''})
+    
+def get_artist_stock(request):
+    stock = artist_stock()
+    return JsonResponse({'stock': stock})
     
 @login_required
 def trade(request):
     return render(request, 'main1/trade.html')
+
+

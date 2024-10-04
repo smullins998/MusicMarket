@@ -26,10 +26,10 @@ def artist_metadata(artist_name):
     #Get track popularity metadata too
     track_metadata = sp.artist_top_tracks(artist_id)
     top_tracks = [track['name'] for track in track_metadata['tracks']]
-    preview_url = [track['preview_url'] for track in track_metadata['tracks']]
+    #preview_url = [track['preview_url'] for track in track_metadata['tracks']]
     track_popularity = [track['popularity'] for track in track_metadata['tracks']]
 
     return dict({'url': artist_url, 'followers': artist_followers,
                  'pictures': artist_picture, 'genres': artist_genres, 'top_tracks': top_tracks,
-                 'preview_url': preview_url, 'track_popularity':track_popularity})
+                  'track_popularity':track_popularity})
 

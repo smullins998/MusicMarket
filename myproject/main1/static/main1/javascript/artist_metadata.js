@@ -20,11 +20,6 @@ async function fetchDataAndDisplay() {
         const artistUrl= data.artists_data.url;
         const artistGenres= data.artists_data.genres;
 
-        console.log('url', artistUrl);
-
-        // Let's make all of this dynamic content and append to innerhtml
-        const url = document.getElementById('appendurl');
-        url.href = artistUrl;
 
         const followers = document.getElementById('artist-followers');
         followers.innerHTML += artistFollowers;

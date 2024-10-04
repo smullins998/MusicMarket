@@ -69,6 +69,7 @@
     padding: 0;
     display: none; /* Initially hide the results */
     z-index: 1; /* Ensure it appears above other elements */
+    align-items: start;
 }
 
 /* Styles for individual search result items */
@@ -80,6 +81,8 @@
     white-space: nowrap; /* Prevent text from wrapping */
     overflow: hidden; /* Hide overflow text */
     text-overflow: ellipsis; /* Show ellipsis (...) for long text */
+    border: 1px solid rgb(213, 213, 213);
+    font-weight: bold;
 }
 
 #search-results li:hover {

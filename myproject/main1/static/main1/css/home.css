@@ -1,0 +1,227 @@
+/* /* /* /* /* /* /* /* 
+ROOT 
+*/ 
+
+:root {
+
+    --main-margin: 5px;
+    --main-font: 'Spotify';
+    --main-div-border: 2px solid #ccc; /* Set border width and color */
+    --main-button-color: rgb(134, 177, 215);
+}
+
+
+@font-face {
+    font-family: "Spotify";
+    src: url("/static/main1/fonts/Spotify/CircularSpotifyText-Medium.otf")
+      format("opentype");
+  }
+  @font-face {
+    font-family: "Spotify-bold";
+    src: url("/static/main1/fonts/Spotify/CircularSpotifyText-Bold.otf")
+      format("opentype");
+  }
+
+
+
+/* /* /* /* /* /* /* /* 
+NAVBAR  
+*/
+
+body, h1, h2, p, ul, li {
+    margin: 0;
+    padding: 0;
+
+}
+
+body {
+    font-family: var(--main-font), sans-serif;
+
+}
+
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    justify-content: center; 
+    padding: 10px 0;
+    padding-top: 10px;
+}
+
+.navbar li {
+    margin: 0 20px; 
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #000000;
+    font-weight: bold;
+    font-size: 1.1rem;
+    font-weight: 300;
+}
+
+.navbar a:hover {
+    color: rgb(116, 116, 116);
+    transition-duration: .2s;
+}
+
+
+
+.topbar {
+    width: 100%;
+    height: 5%;
+    display: flex;
+    margin: 5px;
+    padding-bottom: 55px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+
+}
+
+.right-links {
+  display: inline-block;
+  right: 0;
+}
+
+#sign-box a {
+  text-decoration: none;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#sign-box a:hover {
+  background-color: #ddd;
+}
+ 
+
+
+/* /* /* /* /* /* /* /* 
+TRADE PAGE 
+*/
+
+  #buysell-container {
+    justify-content: center;
+    text-align: center;
+    align-items:center;
+    margin: var(--margin);
+    min-width: 200px;
+    border: var(--div-border);
+    border-radius: 8px; /* Add rounded corners */
+    padding: 20px; /* Add padding inside the container */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  }
+
+
+  #shares-input {
+    justify-content: center;
+    text-align: center;
+    align-items:center;
+  }
+
+  #shares-input > p {
+    margin-top: 10px;
+  }
+
+  #div-1-container {
+    display: flex;
+    margin-left: 10%;
+    margin-right:10%;
+  }
+
+  #graph-container {
+    width: 80%;
+    border: var(--div-border);
+    border-radius: 8px; /* Add rounded corners */
+    padding: 20px; /* Add padding inside the container */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    margin-left: 15px;
+  }
+
+  #submit-div {
+    margin-top: 25px;
+  }
+
+  #submit-div  > button {
+    background-color: var(--main-button-color)
+  
+  }
+
+
+
+/* /* /* /* /* /* /* /* 
+HOME PAGE!!!!
+*/
+
+.home-page {
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  .portfolio-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 0 20px;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .stock {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .stock-name {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .stock-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .stock-quantity,
+  .stock-value,
+  .stock-status {
+    flex: 1;
+  }
+
+  .up {
+    color: green;
+  }
+
+  .down {
+    color: red;
+  }
+}
+
+.artist-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.artist-image {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+}
+
+.artist-bio {
+    max-width: 800px;
+    margin: 0 auto;
+}
