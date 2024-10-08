@@ -18,3 +18,4 @@ def artist_stock_graph(artist_name):
 
 # Remove the matplotlib code as we'll use JavaScript for rendering
 
+git 

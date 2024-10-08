@@ -1,139 +1,12 @@
-{% extends "main1/home.html" %} {% load static %} {% block content %}
-<style>
-  :root {
-    --primary-color: #1DB954;
-    --secondary-color: #191414;
-    --text-color: #FFFFFF;
-    --background-color: #FFFFFF;
-    --accent-color: #1ED760;
-  }
+{% extends "main1/home.html" %}
+{% load static %}
 
-  body {
-    background-color: var(--background-color);
-    color: var(--text-color);
-    font-family: 'Circular', Arial, sans-serif;
-  }
-
-  #artist-page {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-
-  #artist-header {
-    text-align: center;
-    margin-bottom: 30px;
-  }
-
-  #artist-name {
-    font-size: 3em;
-    color: var(--primary-color);
-  }
-
-  #artist-price {
-    font-size: 2em;
-    font-weight: bold;
-  }
-
-  #artist-change {
-    font-size: 1.2em;
-    color: var(--accent-color);
-  }
-
-  #content-container {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 30px;
-  }
-
-  #graph-container {
-    width: 65%;
-    background-color: var(--secondary-color);
-    border-radius: 10px;
-    padding: 20px;
-  }
-
-  #order-container {
-    width: 30%;
-    background-color: var(--secondary-color);
-    border-radius: 10px;
-    padding: 20px;
-  }
-
-  .order-form {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .form-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-  }
-
-  .form-group {
-    width: 48%;
-  }
-
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--text-color);
-  }
-
-  .form-group select,
-  .form-group input {
-    width: 100%;
-    padding: 8px;
-    border: none;
-    border-radius: 4px;
-    background-color: var(--background-color);
-    color: var(--text-color);
-  }
-
-  .btn-primary {
-    background-color: var(--primary-color);
-    color: var(--text-color);
-    border: none;
-    padding: 10px 20px;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-
-  .btn-primary:hover {
-    background-color: var(--accent-color);
-  }
-
-  #metadata-container {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-  }
-
-  .metadata-item {
-    width: 22%;
-    background-color: var(--secondary-color);
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-
-  .metadata-item h3 {
-    color: var(--primary-color);
-    margin-bottom: 10px;
-  }
-</style>
-
-<div id="spotify-brand">
-</div>
-
+{% block content %}
 <div id="artist-page">
   <div id="artist-header">
     <h1 id="artist-name">{{ artist }}</h1>
     <div id="artist-price">${{ stock_data.current_price|floatformat:2 }}</div>
-    <div id="artist-change" {% if stock_data.price_change >= 0 %}style="color: #27ae60;"{% else %}style="color: #e74c3c;"{% endif %}>
+    <div id="artist-change" data-change="{{ stock_data.price_change }}">
       ${{ stock_data.price_change|floatformat:2 }} ({{ stock_data.percent_change|floatformat:2 }}%)
     </div>
   </div>
@@ -142,40 +15,57 @@
     <div id="graph-container">
       <!-- Placeholder for the graph -->
     </div>
-
     <div id="order-container">
       <h2>Place an Order</h2>
       <form action="{% url 'artist_detail' artist %}" method="POST" class="order-form">
         {% csrf_token %}
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="{{ form.buysell.id_for_label }}">Order Type:</label>
-            {{ form.buysell }}
-          </div>
-          <div class="form-group">
-            <label for="{{ form.type.id_for_label }}">Order Method:</label>
-            {{ form.type }}
-          </div>
+        <div class="form-group">
+          <label for="{{ form.buysell.id_for_label }}">Order Type</label>
+          {{ form.buysell }}
         </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="{{ form.limit_price.id_for_label }}">Limit Price:</label>
+        <div class="form-group">
+          <label for="{{ form.type.id_for_label }}">Order Method</label>
+          {{ form.type }}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.num_shares.id_for_label }}">Number of Shares</label>
+          {{ form.num_shares }}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.limit_price.id_for_label }}">Limit Price</label>
+          <div class="input-group">
+            <span class="input-group-addon">$</span>
             {{ form.limit_price }}
           </div>
-          <div class="form-group">
-            <label for="{{ form.num_shares.id_for_label }}">Number of Shares:</label>
-            {{ form.num_shares }}
-          </div>
         </div>
-
-        <div class="form-row">
-          <button type="submit" class="btn btn-primary">Place Order</button>
+        <div id="order-total" class="form-group">
+          <label>Order Total:</label>
+          <span id="total-amount">$0.00</span>
         </div>
+        <button type="submit" class="btn btn-primary btn-block">Place Order</button>
       </form>
     </div>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const numSharesInput = document.getElementById('{{ form.num_shares.id_for_label }}');
+      const limitPriceInput = document.getElementById('{{ form.limit_price.id_for_label }}');
+      const totalAmountSpan = document.getElementById('total-amount');
+      const currentPrice = {{ stock_data.current_price|floatformat:2 }};
+
+      function updateTotal() {
+        const shares = parseFloat(numSharesInput.value) || 0;
+        const price = parseFloat(limitPriceInput.value) || currentPrice;
+        const total = shares * price;
+        totalAmountSpan.textContent = '$' + total.toFixed(2);
+      }
+
+      numSharesInput.addEventListener('input', updateTotal);
+      limitPriceInput.addEventListener('input', updateTotal);
+      updateTotal();
+    });
+  </script>
 
   <div id="metadata-container">
     <div class="metadata-item">
@@ -198,9 +88,11 @@
 
   <div id="artist-bio">
     <h2>Artist Biography</h2>
-    <div id="bio-content"></div>
+    <div id="bio-content" class="bio-truncate">
+      <p id="bio-text"></p>
+    </div>
+    <button id="see-more-btn" class="btn btn-link">See More</button>
   </div>
-
 
   <div id="artist-metadata">
     <h2>Artist Details</h2>
@@ -223,14 +115,33 @@
 </div>
 
 <style>
+  :root {
+    --primary-color: #34A853;
+    --secondary-color: #4285F4;
+    --text-color: #202124;
+    --background-color: #F8F9FA;
+    --accent-color: #FBBC05;
+    --highlight-color: #EA4335;
+    --secondary-color: #191414;
+    --text-color: #333;
+    --background-color: #f8f9fa;
+    --accent-color: #1ED760;
+  }
+
+  /* General Styles */
+  body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
   #artist-page {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
-    background-color: #f8f9fa;
   }
+
+  /* Header Styles */
   #artist-header {
     text-align: center;
     margin-bottom: 30px;
@@ -239,63 +150,63 @@
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
+
   #artist-name {
     font-size: 2.5em;
     margin-bottom: 10px;
     color: #2c3e50;
   }
+
   #artist-price {
     font-size: 2em;
     font-weight: bold;
     color: #27ae60;
   }
+
   #artist-change {
     font-size: 1.2em;
-    color: #27ae60;
   }
+
+  /* Content Container Styles */
   #content-container {
     display: flex;
     justify-content: space-between;
     margin-bottom: 30px;
   }
+
+  #graph-container, #order-container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
   #graph-container {
     width: 65%;
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
-  #price-graph {
-    width: 100%;
-    height: auto;
-  }
+
   #order-container {
     width: 30%;
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
+
+  /* Form Styles */
   .order-form {
     display: flex;
     flex-direction: column;
     gap: 15px;
   }
-  .form-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-  }
+
   .form-group {
-    flex: 1;
     display: flex;
     flex-direction: column;
   }
+
   .form-group label {
     margin-bottom: 5px;
     font-weight: bold;
     color: #2c3e50;
   }
+
   .form-group input,
   .form-group select {
     width: 100%;
@@ -304,8 +215,9 @@
     border-radius: 4px;
     font-size: 14px;
   }
+
   .btn-primary {
-    background-color: #3498db;
+    background-color: var(--primary-color);
     border: none;
     color: white;
     padding: 10px 20px;
@@ -316,15 +228,19 @@
     font-size: 16px;
     font-weight: bold;
   }
+
   .btn-primary:hover {
-    background-color: #2980b9;
+    background-color: var(--accent-color);
   }
+
+  /* Metadata Styles */
   #metadata-container {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
     margin-bottom: 30px;
   }
+
   .metadata-item {
     width: 22%;
     text-align: center;
@@ -334,16 +250,20 @@
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
+
   .metadata-item h3 {
     font-size: 1em;
     margin-bottom: 5px;
     color: #7f8c8d;
   }
+
   .metadata-item p {
     font-size: 1.2em;
     font-weight: bold;
     color: #2c3e50;
   }
+
+  /* Artist Bio Styles */
   #artist-bio {
     margin-top: 30px;
     background-color: #ffffff;
@@ -351,16 +271,50 @@
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
+
   #artist-bio h2 {
     font-size: 1.5em;
     margin-bottom: 15px;
     color: #2c3e50;
   }
+
   #bio-content {
     line-height: 1.6;
     color: #34495e;
   }
 
+  .bio-truncate {
+    max-height: 100px;
+    overflow: hidden;
+    position: relative;
+    transition: max-height 0.3s ease-out;
+  }
+
+  .bio-truncate.expanded {
+    max-height: none;
+  }
+
+  .bio-truncate::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background: linear-gradient(to bottom, rgba(248, 249, 250, 0), rgba(248, 249, 250, 1));
+    pointer-events: none;
+  }
+
+  .bio-truncate.expanded::after {
+    display: none;
+  }
+
+  #see-more-btn {
+    display: block;
+    margin-top: 10px;
+  }
+
+  /* Artist Metadata Styles */
   #artist-metadata {
     background-color: #ffffff;
     padding: 20px;
@@ -375,15 +329,11 @@
     margin-bottom: 20px;
   }
 
-  .metadata-item {
-    width: 48%;
-  }
-
   .artist-image {
+    width: 30%;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 30%; /* Reduced from 48% to 30% */
   }
 
   #artist-picture {
@@ -391,12 +341,12 @@
     height: auto;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    max-height: 200px; /* Added max-height to limit the size */
-    object-fit: cover; /* Ensures the image covers the area without stretching */
+    max-height: 200px;
+    object-fit: cover;
   }
 
   .artist-details {
-    width: 65%; /* Increased from 48% to 65% */
+    width: 65%;
   }
 
   .genre-tags {
@@ -413,7 +363,7 @@
     font-size: 14px;
     font-weight: bold;
     color: #ffffff;
-    background-color: #1DB954;
+    background-color: var(--primary-color);
     transition: all 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
@@ -433,79 +383,103 @@
     margin-bottom: 10px;
   }
 </style>
+
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    var artist = "{{ artist }}";
+    const artist = "{{ artist }}";
     
-    // Fetch artist bio
-    fetch(`/api/artist_bio/?query=${encodeURIComponent(artist)}`)
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('bio-content').textContent = data.bio;
-      })
-      .catch(error => {
-        console.error('Error fetching artist biography:', error);
-        document.getElementById('bio-content').textContent = 'Failed to load artist biography.';
-      });
-
-    // Fetch artist metadata
-    fetch(`/api/artist_metadata/?query=${encodeURIComponent(artist)}`)
-      .then(response => response.json())
-      .then(data => {
-        const artistData = data.artists_data;
-        
-        // Update artist picture
-        document.getElementById('artist-picture').src = artistData.pictures;
-        
-        // Update followers
-        document.getElementById('followers').textContent = artistData.followers.toLocaleString();
-        
-        // Update genres
-        const genresContainer = document.getElementById('genres');
-        artistData.genres.forEach((genre, index) => {
-          const genreTag = document.createElement('span');
-          genreTag.className = 'genre-tag';
-          genreTag.textContent = genre;
-          genreTag.style.backgroundColor = getRandomColor();
-          genresContainer.appendChild(genreTag);
+    function fetchArtistBio() {
+      fetch(`/api/artist_bio/?query=${encodeURIComponent(artist)}`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('bio-content').textContent = data.bio;
+        })
+        .catch(error => {
+          console.error('Error fetching artist biography:', error);
+          document.getElementById('bio-content').textContent = 'Failed to load artist biography.';
         });
-        
-        // Update top tracks
-        const topTracksList = document.getElementById('top-tracks-list');
-        artistData.top_tracks.forEach((track, index) => {
-          const li = document.createElement('li');
-          li.textContent = `${track} (${artistData.track_popularity[index]})`;
-          topTracksList.appendChild(li);
+    }
+
+    function fetchArtistMetadata() {
+      fetch(`/api/artist_metadata/?query=${encodeURIComponent(artist)}`)
+        .then(response => response.json())
+        .then(data => {
+          const artistData = data.artists_data;
+          
+          document.getElementById('artist-picture').src = artistData.pictures;
+          document.getElementById('followers').textContent = artistData.followers.toLocaleString();
+          
+          const genresContainer = document.getElementById('genres');
+          artistData.genres.forEach(genre => {
+            const genreTag = document.createElement('span');
+            genreTag.className = 'genre-tag';
+            genreTag.textContent = genre;
+            genreTag.style.backgroundColor = getRandomColor();
+            genresContainer.appendChild(genreTag);
+          });
+          
+          const topTracksList = document.getElementById('top-tracks-list');
+          artistData.top_tracks.forEach((track, index) => {
+            const li = document.createElement('li');
+            li.textContent = `${track} (${artistData.track_popularity[index]})`;
+            topTracksList.appendChild(li);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching artist metadata:', error);
+          document.getElementById('artist-metadata').textContent = 'Failed to load artist metadata.';
         });
-      })
-      .catch(error => {
-        console.error('Error fetching artist metadata:', error);
-        document.getElementById('artist-metadata').textContent = 'Failed to load artist metadata.';
-      });
-  });
+    }
 
-  function getRandomColor() {
-    const hue = Math.floor(Math.random() * 360);
-    return `hsl(${hue}, 70%, 50%)`;
-  }
+    function fetchArtistStock() {
+      fetch('/api/artist_stock/')
+        .then(response => response.json())
+        .then(data => {
+          const stockData = data.stock;
+          document.getElementById('artist-price').textContent = `$${stockData.current_price.toFixed(2)}`;
+          const changeElement = document.getElementById('artist-change');
+          changeElement.textContent = `${stockData.price_change_percent >= 0 ? '+' : ''}${stockData.price_change_percent.toFixed(2)}%`;
+          changeElement.style.color = stockData.price_change_percent >= 0 ? '#27ae60' : '#e74c3c';
+          
+          document.getElementById('market-cap').textContent = formatMarketCap(stockData.market_cap);
+          document.getElementById('fifty-two-week-high').textContent = `$${stockData.fifty_two_week_high.toFixed(2)}`;
+          document.getElementById('fifty-two-week-low').textContent = `$${stockData.fifty_two_week_low.toFixed(2)}`;
+          document.getElementById('pe-ratio').textContent = stockData.pe_ratio ? stockData.pe_ratio.toFixed(2) : 'N/A';
+        })
+        .catch(error => {
+          console.error('Error fetching artist stock data:', error);
+        });
+    }
 
+    function getRandomColor() {
+      const hue = Math.floor(Math.random() * 360);
+      return `hsl(${hue}, 70%, 50%)`;
+    }
 
-  fetch('/api/artist_stock/')
-    .then(response => response.json())
-    .then(data => {
-      const stockData = data.stock;
-      document.getElementById('artist-price').textContent = `$${stockData.current_price.toFixed(2)}`;
-      document.getElementById('artist-change').textContent = 1
-      
-      // Update metadata container
-      document.getElementById('market-cap').textContent = `$${(stockData.market_cap / 1e9).toFixed(2)} Billion`;
-      document.getElementById('fifty-two-week-high').textContent = `$${stockData.fifty_two_week_high.toFixed(2)}`;
-      document.getElementById('fifty-two-week-low').textContent = `$${stockData.fifty_two_week_low.toFixed(2)}`;
-      document.getElementById('pe-ratio').textContent = stockData.pe_ratio ? stockData.pe_ratio.toFixed(2) : 'N/A';
-    })
-    .catch(error => {
-      console.error('Error fetching Apple stock data:', error);
+    function formatMarketCap(marketCap) {
+      if (marketCap >= 1e12) {
+        return `$${(marketCap / 1e12).toFixed(2)} Trillion`;
+      } else if (marketCap >= 1e9) {
+        return `$${(marketCap / 1e9).toFixed(2)} Billion`;
+      } else {
+        return `$${(marketCap / 1e6).toFixed(2)} Million`;
+      }
+    }
+
+    // Bio expand/collapse functionality
+    const bioContent = document.getElementById('bio-content');
+    const seeMoreBtn = document.getElementById('see-more-btn');
+
+    seeMoreBtn.addEventListener('click', function() {
+      bioContent.classList.toggle('expanded');
+      seeMoreBtn.textContent = bioContent.classList.contains('expanded') ? 'See Less' : 'See More';
     });
+
+    // Fetch data
+    fetchArtistBio();
+    fetchArtistMetadata();
+    fetchArtistStock();
+  });
 </script>
 
 {% endblock %}
