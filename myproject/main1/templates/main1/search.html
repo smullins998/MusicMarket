@@ -1,0 +1,48 @@
+{% extends 'main1/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Search Top Artists by Genre</h2>
+    
+    <!-- Genres bar -->
+    <div class="genres-bar mb-4">
+        <a href="{% url 'search' %}" class="btn btn-outline-primary {% if not selected_genre %}active{% endif %}">All Genres</a>
+        {% for genre in genres %}
+            <a href="{% url 'search' %}?genre={{ genre|urlencode }}" class="btn btn-outline-primary {% if selected_genre == genre %}active{% endif %}">{{ genre }}</a>
+        {% endfor %}
+    </div>
+
+    {% if top_artists %}
+        <h3 class="mt-4">Top 10 Artists{% if selected_genre %} in {{ selected_genre }}{% endif %}</h3>
+        <div class="row">
+            {% for artist in top_artists %}
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ artist.name }}</h5>
+                            <p class="card-text">Stock Price: ${{ artist.stock_price }}</p>
+                            <a href="{% url 'trade' artist.id %}" class="btn btn-primary">Trade</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No artists found for the selected genre.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .genres-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .genres-bar .btn {
+        margin-bottom: 5px;
+    }
+</style>
+{% endblock %}

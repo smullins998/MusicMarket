@@ -38,34 +38,13 @@
             {{ form.limit_price }}
           </div>
         </div>
-        <div id="order-total" class="form-group">
-          <label>Order Total:</label>
-          <span id="total-amount">$0.00</span>
-        </div>
+    
         <button type="submit" class="btn btn-primary btn-block">Place Order</button>
       </form>
     </div>
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const numSharesInput = document.getElementById('{{ form.num_shares.id_for_label }}');
-      const limitPriceInput = document.getElementById('{{ form.limit_price.id_for_label }}');
-      const totalAmountSpan = document.getElementById('total-amount');
-      const currentPrice = {{ stock_data.current_price|floatformat:2 }};
 
-      function updateTotal() {
-        const shares = parseFloat(numSharesInput.value) || 0;
-        const price = parseFloat(limitPriceInput.value) || currentPrice;
-        const total = shares * price;
-        totalAmountSpan.textContent = '$' + total.toFixed(2);
-      }
-
-      numSharesInput.addEventListener('input', updateTotal);
-      limitPriceInput.addEventListener('input', updateTotal);
-      updateTotal();
-    });
-  </script>
 
   <div id="metadata-container">
     <div class="metadata-item">
@@ -98,7 +77,7 @@
     <h2>Artist Details</h2>
     <div class="metadata-grid">
       <div class="metadata-item artist-image">
-        <img id="artist-picture" src="" alt="{{ artist }} picture">
+        <img id="artist-picture" src="" alt="{{ artist }} picture" style="width: 100%; max-width: 300px; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
       </div>
       <div class="metadata-item artist-details">
         <h3>Spotify Followers</h3>
@@ -382,6 +361,38 @@
   .top-tracks li {
     margin-bottom: 10px;
   }
+
+  .top-tracks li a {
+    color: var(--text-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    position: relative;
+  }
+
+  .top-tracks li a:hover {
+    color: var(--primary-color);
+  }
+
+  .top-tracks li a:hover::before {
+    content: '▶';
+    position: absolute;
+    left: -20px;
+    color: var(--primary-color);
+  }
+
+  .top-tracks li a.no-preview {
+    color: #999;
+    cursor: not-allowed;
+  }
+
+  .top-tracks li a.no-preview:hover {
+    color: #777;
+  }
+
+  .top-tracks li a.no-preview:hover::before {
+    content: '✕';
+    color: #999;
+  }
 </style>
 
 <script>
@@ -405,6 +416,7 @@
         .then(response => response.json())
         .then(data => {
           const artistData = data.artists_data;
+          console.log('Artist Data:', artistData);
           
           document.getElementById('artist-picture').src = artistData.pictures;
           document.getElementById('followers').textContent = artistData.followers.toLocaleString();
@@ -419,11 +431,38 @@
           });
           
           const topTracksList = document.getElementById('top-tracks-list');
-          artistData.top_tracks.forEach((track, index) => {
-            const li = document.createElement('li');
-            li.textContent = `${track} (${artistData.track_popularity[index]})`;
-            topTracksList.appendChild(li);
-          });
+          if (Array.isArray(artistData.top_tracks)) {
+            artistData.top_tracks.forEach((track, index) => {
+              const li = document.createElement('li');
+              const trackLink = document.createElement('a');
+              trackLink.textContent = `${track} (${artistData.track_popularity[index]})`;
+              
+              if (artistData.preview_urls[index]) {
+                const audio = new Audio(artistData.preview_urls[index]);
+                
+                trackLink.addEventListener('mouseenter', () => {
+                  audio.play();
+                });
+                
+                trackLink.addEventListener('mouseleave', () => {
+                  audio.pause();
+                  audio.currentTime = 0;
+                });
+                
+                trackLink.href = '#';
+                trackLink.onclick = (e) => e.preventDefault();
+              } else {
+                trackLink.classList.add('no-preview');
+                trackLink.title = 'No preview available';
+              }
+              
+              li.appendChild(trackLink);
+              topTracksList.appendChild(li);
+            });
+          } else {
+            console.error('top_tracks is not an array:', artistData.top_tracks);
+            topTracksList.textContent = 'Failed to load top tracks.';
+          }
         })
         .catch(error => {
           console.error('Error fetching artist metadata:', error);

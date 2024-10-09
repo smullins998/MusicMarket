@@ -28,8 +28,20 @@ def artist_metadata(artist_name):
     top_tracks = [track['name'] for track in track_metadata['tracks']]
     #preview_url = [track['preview_url'] for track in track_metadata['tracks']]
     track_popularity = [track['popularity'] for track in track_metadata['tracks']]
+    
+    # Get the artist's top tracks
+    top_tracks_response = sp.artist_top_tracks(artist_id)
+    preview_urls = []
+    # Extract the preview URLs
+    for idx, track in enumerate(top_tracks_response['tracks']):
+        track_name = track['name']
+        preview_url = track.get('preview_url')
+        if preview_url:
+            preview_urls.append(preview_url)
+        else:
+            preview_urls.append(None)
 
     return dict({'url': artist_url, 'followers': artist_followers,
                  'pictures': artist_picture, 'genres': artist_genres, 'top_tracks': top_tracks,
-                  'track_popularity':track_popularity})
+                  'track_popularity':track_popularity, 'preview_urls': preview_urls})
 

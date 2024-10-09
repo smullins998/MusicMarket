@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 
 def artist_stock_graph(artist_name):
-    ticker = yf.Ticker(artist_name)
+    ticker = yf.Ticker("AAPL")
     data = ticker.history(period="10y")
     
     # Prepare data for JSON serialization
@@ -16,6 +16,3 @@ def artist_stock_graph(artist_name):
     
     return json.dumps(chart_data)
 
-# Remove the matplotlib code as we'll use JavaScript for rendering
-
-git 
