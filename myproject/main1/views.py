@@ -70,36 +70,26 @@ def get_artist_stock(request):
 def get_artist_stock_graph(request):
     artist = request.GET.get('artist', '')
     if artist:
-        stock_graph = artist_stock_graph(artist)
-        return JsonResponse({'stock_graph': stock_graph})
+        stock_graph = artist_stock_graph(artist)  # Pass the artist to the function
+        return JsonResponse(stock_graph, safe=False)
     else:
-        return JsonResponse({'stock_graph': []})
+        return JsonResponse({'error': 'Artist not provided'}, status=400)
 
 @login_required
 def trade(request):
     return render(request, 'main1/trade.html')
 
-def search(request):
-    genres = Artist.objects.values_list('genre', flat=True).distinct()
-    selected_genre = request.GET.get('genre', '')
-    
-    if selected_genre:
-        top_artists = Artist.objects.filter(genre=selected_genre).order_by('-popularity')[:10]
-    else:
-        top_artists = Artist.objects.all().order_by('-popularity')[:10]
-    
-    for artist in top_artists:
-        artist.stock_price = calculate_stock_price(artist)
-    
-    context = {
-        'genres': genres,
-        'selected_genre': selected_genre,
-        'top_artists': top_artists,
-    }
-    return render(request, 'main1/search.html', context)
+def artist_stock_graph(request):
+    artist = request.GET.get('artist', '')
+    data = get_artist_stock_graph(artist)
+    return JsonResponse(data)
 
 def calculate_stock_price(artist):
     # Implement your stock price calculation logic here
     # This is a placeholder function
     return 100.00  # Return a dummy value for now
+
+def artists_list(request):
+    # Implement the logic for listing artists
+    return render(request, 'main1/artists_list.html')  # Create this template
 

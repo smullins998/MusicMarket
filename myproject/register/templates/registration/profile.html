@@ -1,29 +1,71 @@
-{% extends "main1/home.html" %}
-
-{% block title %}Logout{% endblock %}
+{% extends "main1/base.html" %}
 
 {% block content %}
+<div class="container mt-5">
+    <h1>{{ user.username }}'s Profile</h1>
+    <p>Email: {{ user.email }}</p>
+    
+    <h2>Your Portfolio</h2>
+    {% if portfolio %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Artist</th>
+                    <th>Shares</th>
+                    <th>Purchase Price</th>
+                    <th>Current Price</th>
+                    <th>Total Value</th>
+                    <th>Gain/Loss</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for position in portfolio %}
+                <tr>
+                    <td>{{ position.artist }}</td>
+                    <td>{{ position.shares }}</td>
+                    <td>${{ position.purchase_price|floatformat:2 }}</td>
+                    <td>${{ position.current_price|floatformat:2 }}</td>
+                    <td>${{ position.total_value|floatformat:2 }}</td>
+                    <td class="{% if position.gain_loss > 0 %}text-success{% elif position.gain_loss < 0 %}text-danger{% endif %}">
+                        ${{ position.gain_loss|floatformat:2 }} ({{ position.gain_loss_percentage|floatformat:2 }}%)
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p><strong>Total Portfolio Value: ${{ total_portfolio_value|floatformat:2 }}</strong></p>
+    {% else %}
+        <p>You don't have any positions in your portfolio yet.</p>
+    {% endif %}
 
-<div class="portfolio-container">
-    <h1>My Stock Portfolio</h1>
-    <div class="stock">
-        <div class="stock-name">Apple Inc. (AAPL)</div>
-        <div class="stock-info">
-            <div class="stock-quantity">Shares: 100</div>
-            <div class="stock-value">Current Value: $12,500</div>
-            <div class="stock-status">Status: <span class="up">+10% (Up)</span></div>
-        </div>
-    </div>
-    <div class="stock">
-        <div class="stock-name">Microsoft Corporation (MSFT)</div>
-        <div class="stock-info">
-            <div class="stock-quantity">Shares: 50</div>
-            <div class="stock-value">Current Value: $7,500</div>
-            <div class="stock-status">Status: <span class="down">-5% (Down)</span></div>
-        </div>
-    </div>
-    <!-- Add more stocks as needed -->
+    <h2>Recent Orders</h2>
+    {% if recent_orders %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Artist</th>
+                    <th>Type</th>
+                    <th>Shares</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in recent_orders %}
+                <tr>
+                    <td>{{ order.date|date:"Y-m-d H:i" }}</td>
+                    <td>{{ order.artist }}</td>
+                    <td>{{ order.get_buysell_display }}</td>
+                    <td>{{ order.num_shares }}</td>
+                    <td>${{ order.price|floatformat:2 }}</td>
+                    <td>${{ order.total_value|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>You haven't placed any orders yet.</p>
+    {% endif %}
 </div>
-
-
 {% endblock %}

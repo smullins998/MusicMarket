@@ -13,7 +13,7 @@
 
   <div id="content-container">
     <div id="graph-container">
-      <!-- Placeholder for the graph -->
+      <canvas id="stockChart"></canvas>
     </div>
     <div id="order-container">
       <h2>Place an Order</h2>
@@ -162,6 +162,7 @@
 
   #graph-container {
     width: 65%;
+    height: 400px; /* Set a fixed height for the graph container */
   }
 
   #order-container {
@@ -189,7 +190,7 @@
   .form-group input,
   .form-group select {
     width: 100%;
-    padding: 8px;
+    padding: 5px;
     border: 1px solid #bdc3c7;
     border-radius: 4px;
     font-size: 14px;
@@ -395,6 +396,11 @@
   }
 </style>
 
+<!-- Add these script tags before your existing script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.1/dist/chartjs-adapter-moment.min.js"></script>
+
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const artist = "{{ artist }}";
@@ -490,6 +496,87 @@
         });
     }
 
+    function fetchArtistStockGraph() {
+      fetch(`/api/artist_stock_graph/?artist=${encodeURIComponent(artist)}`)
+        .then(response => response.text())  // Change this line from response.json() to response.text()
+        .then(data => {
+          console.log('Raw stock graph data:', data); // Log the raw data for debugging
+          try {
+            const parsedData = JSON.parse(data);
+            console.log('Parsed stock graph data:', parsedData); // Log the parsed data for debugging
+            if (parsedData && parsedData.dates && parsedData.prices) {
+              createStockChart(parsedData);
+            } else {
+              console.error('Invalid data format for stock graph');
+              document.getElementById('graph-container').innerHTML = '<p>Unable to load stock graph data.</p>';
+            }
+          } catch (error) {
+            console.error('Error parsing stock graph data:', error);
+            document.getElementById('graph-container').innerHTML = '<p>Error parsing stock graph data.</p>';
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching artist stock graph data:', error);
+          document.getElementById('graph-container').innerHTML = '<p>Error loading stock graph data.</p>';
+        });
+    }
+
+    function createStockChart(data) {
+      if (!data || !data.dates || !data.prices || data.dates.length !== data.prices.length) {
+        console.error('Invalid data format for stock graph');
+        return;
+      }
+
+      const ctx = document.getElementById('stockChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.dates,
+          datasets: [{
+            label: 'Stock Price',
+            data: data.dates.map((date, index) => ({x: date, y: data.prices[index]})),
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              type: 'time',
+              time: {
+                unit: 'day',
+                displayFormats: {
+                  day: 'MMM D'
+                }
+              },
+              title: {
+                display: true,
+                text: 'Date'
+              }
+            },
+            y: {
+              beginAtZero: false,
+              title: {
+                display: true,
+                text: 'Price ($)'
+              }
+            }
+          },
+          plugins: {
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+            },
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    }
+
     function getRandomColor() {
       const hue = Math.floor(Math.random() * 360);
       return `hsl(${hue}, 70%, 50%)`;
@@ -518,6 +605,7 @@
     fetchArtistBio();
     fetchArtistMetadata();
     fetchArtistStock();
+    fetchArtistStockGraph();
   });
 </script>
 
